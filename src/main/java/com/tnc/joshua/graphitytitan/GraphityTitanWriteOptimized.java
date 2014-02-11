@@ -25,7 +25,7 @@ public class GraphityTitanWriteOptimized extends WriteOptimizedGraphity {
 
 		// create user model
 		titanGraph.createKeyIndex(Property.User.ID, Vertex.class);
-		titanGraph.makeType().name(Property.User.NAME).unique(Direction.OUT).dataType(String.class).makePropertyKey();
+		titanGraph.makeKey(Property.User.NAME).dataType(String.class).make();
 	}
 
 }

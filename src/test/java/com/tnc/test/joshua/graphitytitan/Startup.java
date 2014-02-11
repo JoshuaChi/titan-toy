@@ -15,8 +15,9 @@ import com.tnc.joshua.socialgraph.SocialGraph;
 public class Startup {
 	public static void main(String[] args) {
 		Configuration conf = new BaseConfiguration();
-		// conf.setProperty("storage.directory", "/tmp/titan2");
+//		conf.setProperty("storage.directory", "/tmp/titan2");
 		conf.setProperty("storage.backend", "cassandra");
+		conf.setProperty("storage.hostname", "127.0.0.1");
 		conf.setProperty("storage.cassandra-config-dir",
 				"config/cassandra.yaml");
 		conf.setProperty("storage.index.search.backend", "elasticsearch");
