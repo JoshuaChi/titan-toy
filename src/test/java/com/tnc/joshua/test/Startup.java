@@ -1,11 +1,15 @@
 package com.tnc.joshua.test;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tnc.joshua.newsfeed.EdgeType;
 import com.tnc.joshua.newsfeed.Property;
@@ -61,7 +65,7 @@ public class Startup {
 		}
 
 		/**
-		 * 1 be a friend of 3,4,5;
+		 * 1 be a friend of 3,4,5,6,7,8,9,10,11;
 		 * 
 		 * 2 be a friend of 3,4,5;
 		 * 
@@ -73,10 +77,15 @@ public class Startup {
 		 * 
 		 * 6 upgrade her membership;
 		 * 
+		 * 7 upgrade her membership;
+		 * 
 		 * 1 upgrade his membership;
 		 */
 		if (graphity.beFriend(1, 3) != 0 || graphity.beFriend(1, 4) != 0
-				|| graphity.beFriend(1, 5) != 0) {
+				|| graphity.beFriend(1, 5) != 0 || graphity.beFriend(1, 6) != 0
+				|| graphity.beFriend(1, 7) != 0 || graphity.beFriend(1, 8) != 0
+				|| graphity.beFriend(1, 9) != 0 || graphity.beFriend(1, 10) != 0
+				|| graphity.beFriend(1, 11) != 0) {
 			System.err.println("1 failed to be friend with user 3, 4 and 5!");
 		}
 		if (graphity.beFriend(2, 3) != 0 || graphity.beFriend(2, 4) != 0
@@ -130,10 +139,37 @@ public class Startup {
 			System.err.println("failed to upgradeMembership");
 		}
 
+		if (graphity.upgradeMembership(10, 1) != 0) {
+			System.err.println("failed to upgradeMembership");
+		}
+
+		if (graphity.upgradeMembership(11, 1) != 0) {
+			System.err.println("failed to upgradeMembership");
+		}
+
+		if (graphity.upgradeMembership(9, 1) != 0) {
+			System.err.println("failed to upgradeMembership");
+		}
+
 		Iterable<Vertex> users = g.getVertices(Property.User.ID, 1L);
-		System.out.println(users.iterator().next()
-				.getVertices(Direction.IN, EdgeType.FOLLOW).iterator().next()
-				.getProperty(Property.User.NAME)
-				+ " stalks.");
+		
+		// as user 1, get all my firends's edges and vertices
+		Iterator<Vertex> vFriends = users.iterator().next().getVertices(Direction.OUT, EdgeType.BEFRIEND).iterator();
+		while (vFriends.hasNext()) {
+			Vertex next = vFriends.next();
+			System.out.println("\n===friend:" + next.getProperty(Property.User.NAME)+"===\n");
+			Iterator<Vertex> vActivities = next.getVertices(Direction.OUT).iterator();
+			Iterator<Edge> eActivities =  next.getEdges(Direction.OUT).iterator();
+			//print all activities edge labels
+			while (eActivities.hasNext()) {
+			  Edge ea = eActivities.next();
+			  System.out.println("edge label:" + ea.getLabel());
+			}
+			while (vActivities.hasNext()) {
+			  Vertex va = vActivities.next();
+			  Set<String> keys = va.getPropertyKeys();
+			  System.out.println("vertex property keys:" + keys.toString());
+			}
+		}
 	}
 }

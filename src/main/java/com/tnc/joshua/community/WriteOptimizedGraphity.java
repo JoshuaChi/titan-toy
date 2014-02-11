@@ -1,5 +1,7 @@
 package com.tnc.joshua.community;
 
+import java.util.NoSuchElementException;
+
 import org.json.JSONObject;
 
 import com.tinkerpop.blueprints.Graph;
@@ -188,11 +190,15 @@ public class WriteOptimizedGraphity extends NewsfeedOperationImpl {
 
 	@Override
 	public int upgradeMembership(long userId, int membershipType) {
-		Vertex vMembership = this.getMembershipByType(membershipType);
-		if (vMembership == null) {
+
+		Vertex vMembership = null;
+		try {
+			vMembership = this.getMembershipByType(membershipType);
+		}catch(NoSuchElementException exception){
 			vMembership = this.graph.addVertex(null);
 			vMembership.setProperty(Property.membership.TYPE, membershipType);
 		}
+		
 		
 		Vertex vUser = this.getUserById(userId);
 
