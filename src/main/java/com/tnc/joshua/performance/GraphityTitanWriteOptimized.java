@@ -1,10 +1,9 @@
-package com.tnc.joshua.graphitytitan;
+package com.tnc.joshua.performance;
 
 import com.thinkaurelius.titan.core.TitanGraph;
-import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
-import com.tnc.joshua.graphity.WriteOptimizedGraphity;
-import com.tnc.joshua.socialgraph.Property;
+import com.tnc.joshua.community.WriteOptimizedGraphity;
+import com.tnc.joshua.newsfeed.Property;
 
 /**
  * write optimized Graphity implementation for Titan
