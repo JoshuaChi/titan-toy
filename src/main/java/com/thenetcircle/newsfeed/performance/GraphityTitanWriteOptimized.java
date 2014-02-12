@@ -1,9 +1,9 @@
-package com.tnc.joshua.performance;
+package com.thenetcircle.newsfeed.performance;
 
+import com.thenetcircle.newsfeed.Property;
+import com.thenetcircle.newsfeed.community.WriteOptimizedGraphity;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Vertex;
-import com.tnc.joshua.community.WriteOptimizedGraphity;
-import com.tnc.joshua.newsfeed.Property;
 
 /**
  * write optimized Graphity implementation for Titan

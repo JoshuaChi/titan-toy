@@ -1,4 +1,4 @@
-package com.tnc.joshua.newsfeed;
+package com.thenetcircle.newsfeed;
 
 /**
  * properties used in social graphs

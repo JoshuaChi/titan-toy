@@ -1,4 +1,4 @@
-package com.tnc.joshua.test;
+package com.thenetcircle.newsfeed.test;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -6,15 +6,15 @@ import java.util.Set;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 
+import com.thenetcircle.newsfeed.EdgeType;
+import com.thenetcircle.newsfeed.Property;
+import com.thenetcircle.newsfeed.impl.NewsfeedOperationImpl;
+import com.thenetcircle.newsfeed.performance.GraphityTitanWriteOptimized;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
-import com.tnc.joshua.newsfeed.EdgeType;
-import com.tnc.joshua.newsfeed.Property;
-import com.tnc.joshua.newsfeed.impl.NewsfeedOperationImpl;
-import com.tnc.joshua.performance.GraphityTitanWriteOptimized;
 
 public class Startup {
 	public static void main(String[] args) {

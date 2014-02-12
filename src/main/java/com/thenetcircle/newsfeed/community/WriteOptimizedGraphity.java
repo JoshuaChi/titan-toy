@@ -1,14 +1,14 @@
-package com.tnc.joshua.community;
+package com.thenetcircle.newsfeed.community;
 
 import java.util.NoSuchElementException;
 
 import org.json.JSONObject;
 
+import com.thenetcircle.newsfeed.EdgeType;
+import com.thenetcircle.newsfeed.Property;
+import com.thenetcircle.newsfeed.impl.NewsfeedOperationImpl;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
-import com.tnc.joshua.newsfeed.EdgeType;
-import com.tnc.joshua.newsfeed.Property;
-import com.tnc.joshua.newsfeed.impl.NewsfeedOperationImpl;
 
 /**
  * write optimized Graphity implementation

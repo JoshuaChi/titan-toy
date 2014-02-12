@@ -1,13 +1,11 @@
-package com.tnc.joshua.newsfeed.impl;
+package com.thenetcircle.newsfeed.impl;
 
-import java.math.BigDecimal;
-
+import com.thenetcircle.newsfeed.EdgeType;
+import com.thenetcircle.newsfeed.NewsfeedOperations;
+import com.thenetcircle.newsfeed.Property;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
-import com.tnc.joshua.newsfeed.EdgeType;
-import com.tnc.joshua.newsfeed.NewsfeedOperations;
-import com.tnc.joshua.newsfeed.Property;
 
 /**
  * basic social graph with basic functions
