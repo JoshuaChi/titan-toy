@@ -43,68 +43,43 @@ public class Property {
 		 * user lastlogin
 		 */
 		public static final String LASTLOGIN = "user_lastlogin";
-		
+
 		public static final String COUNTRY = "country";
-		
-		public static final String LAT="lat";
-		
-		public static final String LON="lon";
+
+		public static final String LAT = "lat";
+
+		public static final String LON = "lon";
 
 	}
 
 	public static class membership {
 		public static final String TYPE = "membership_type";
 	}
-	
-	/**
-	 * properties for status updates
-	 * 
-	 * 
-	 */
-	public static class StatusUpdate {
-
-		/**
-		 * unique status update identifier
-		 */
-		public static final String ID = "status_update_id";
-
-		/**
-		 * creation time-stamp
-		 */
-		public static final String TIMESTAMP = "timestamp";
-
-		/**
-		 * JSON formatted item content
-		 */
-		public static final String CONTENT = "content";
-
-	}
-
 
 	public static class Avatar {
 		public static final String ID = "avatar_id";
 		public static final String TIMESTAMP = "timestamp";
 	}
-	
+
 	public static class Photo {
 		public static final String ID = "photo_id";
 		public static final String TIMESTAMP = "timestamp";
 	}
-	
+
 	public static class Event {
 		public static final String ID = "event_id";
 		public static final String SUBJECT = "event_subject";
 		public static final String CONTENT = "event_content";
 		public static final String TIMESTAMP = "timestamp";
 	}
-	
+
 	public static class Blog {
 		public static final String ID = "blog_id";
 		public static final String SUBJECT = "blog_subject";
 		public static final String CONTENT = "blog_content";
 		public static final String TIMESTAMP = "timestamp";
 	}
-	
+
 	public static class BlogComment {
 		public static final String ID = "comment_id";
 		public static final String BLOG_ID = "blog_id";

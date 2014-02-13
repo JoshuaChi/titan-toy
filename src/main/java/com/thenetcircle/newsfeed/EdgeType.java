@@ -9,6 +9,7 @@ public class EdgeType {
 
 	/**
 	 * user is a friend of another
+	 * 
 	 */
 	public static final String BEFRIEND = "be_friend";
 	
@@ -41,15 +42,5 @@ public class EdgeType {
 	 * user comments blog
 	 */
 	public static final String BLOG_COMMENT = "blog_comment";
-	
-	/**
-	 * user follows another
-	 */
-	public static final String FOLLOW = "follows";
-
-	/**
-	 * user posted a status update
-	 */
-	public static final String POST = "posted";
 
 }
