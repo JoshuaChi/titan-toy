@@ -4,6 +4,7 @@ import com.thenetcircle.newsfeed.EdgeType;
 import com.thenetcircle.newsfeed.NewsfeedOperations;
 import com.thenetcircle.newsfeed.Property;
 import com.thinkaurelius.titan.core.TitanTransaction;
+import com.thinkaurelius.titan.core.TitanVertex;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
@@ -29,13 +30,4 @@ public abstract class NewsfeedOperationImpl implements NewsfeedOperations {
 		this.graph = graph;
 	}
 
-	protected boolean beFriend(Vertex user, Vertex target) {
-		for (Vertex followed : user.getVertices(Direction.OUT,
-				EdgeType.BEFRIEND)) {
-			if (followed.equals(target)) {
-				return true;
-			}
-		}
-		return false;
-	}
 }
