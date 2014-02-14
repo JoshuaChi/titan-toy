@@ -62,7 +62,7 @@ public class Property {
 
 	public static class Avatar {
 		public static final String ID = "avatar_id";
-		public static final String TIMESTAMP = "timestamp";
+//		public static final String TIMESTAMP = "timestamp";
 	}
 
 	public static class Photo {

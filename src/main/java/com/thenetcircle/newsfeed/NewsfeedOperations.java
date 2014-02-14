@@ -44,5 +44,5 @@ public interface NewsfeedOperations {
 
 	int commentBlog(String blogId, String commentId, String comment, long timestamp, String userId);
 	
-	int upgradeMembership(String userId, String membershipType);
+	int upgradeMembership(String userId, String membershipType, long timestamp);
 }

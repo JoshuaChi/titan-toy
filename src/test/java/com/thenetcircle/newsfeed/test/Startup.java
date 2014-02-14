@@ -2,7 +2,6 @@ package com.thenetcircle.newsfeed.test;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -10,13 +9,11 @@ import org.apache.commons.configuration.Configuration;
 import com.thenetcircle.newsfeed.EdgeType;
 import com.thenetcircle.newsfeed.Property;
 import com.thenetcircle.newsfeed.impl.NewsfeedOperationImpl;
-import com.thenetcircle.newsfeed.impl.NewsfeedOperationImpl;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanMultiVertexQuery;
 import com.thinkaurelius.titan.core.TitanVertex;
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
 public class Startup {
@@ -26,12 +23,12 @@ public class Startup {
 		 */
 		Configuration conf = new BaseConfiguration();
 		conf.setProperty("storage.backend", "cassandra");
-		conf.setProperty("storage.keyspace", "titan27");
+		conf.setProperty("storage.keyspace", "titan31");
 		conf.setProperty("storage.hostname", "127.0.0.1");
 		conf.setProperty("storage.cassandra-config-dir",
 				"config/cassandra.yaml");
 		conf.setProperty("storage.index.search.backend", "elasticsearch");
-		conf.setProperty("storage.index.search.directory", "/tmp/searchindex27");
+		conf.setProperty("storage.index.search.directory", "/tmp/searchindex31");
 		conf.setProperty("storage.index.search.client-only", "false");
 		conf.setProperty("storage.index.search.local-mode", "true");
 
@@ -202,102 +199,57 @@ public class Startup {
 			System.err.println("failed to commentBlog or exists already");
 		}
 
-		if (graphity.upgradeMembership("user-6", "membership-1") != 0) {
+		if (graphity.upgradeMembership("user-6", "membership-1", 11L) != 0) {
 			System.err.println("failed to upgradeMembership or exists already");
 		}
 
-		if (graphity.upgradeMembership("user-7", "membership-2") != 0) {
+		if (graphity.upgradeMembership("user-7", "membership-2", 10L) != 0) {
 			System.err.println("failed to upgradeMembership or exists already");
 		}
 
-		if (graphity.upgradeMembership("user-1", "membership-3") != 0) {
+		if (graphity.upgradeMembership("user-1", "membership-3", 40L) != 0) {
 			System.err.println("failed to upgradeMembership or exists already");
 		}
 
-		if (graphity.upgradeMembership("user-10", "membership-1") != 0) {
+		if (graphity.upgradeMembership("user-10", "membership-1", 30L) != 0) {
 			System.err.println("failed to upgradeMembership or exists already");
 		}
 
-		if (graphity.upgradeMembership("user-11", "membership-1") != 0) {
+		if (graphity.upgradeMembership("user-11", "membership-1", 20L) != 0) {
 			System.err.println("failed to upgradeMembership or exists already");
 		}
 
-		if (graphity.upgradeMembership("user-9", "membership-1") != 0) {
+		if (graphity.upgradeMembership("user-9", "membership-1", 14L) != 0) {
 			System.err.println("failed to upgradeMembership or exists already");
 		}
 
 		Iterable<Vertex> users = g.getVertices(Property.User.ID, "user-1");
-
-		// as user 1, get all my firends's edges and vertices
-		// Iterator<Vertex> vFriends1 =
-		// users.iterator().next().getVertices(Direction.OUT,
-		// EdgeType.BEFRIEND).iterator();
-		// while (vFriends1.hasNext()) { Vertex next = vFriends1.next();
-		// System.out.println("\n===friend:" +
-		// next.getProperty(Property.User.NAME)+"===\n");
-		// Iterator<Vertex> vActivities =
-		// next.getVertices(Direction.OUT).iterator();
-		// Iterator<Edge> eActivities = next.getEdges(Direction.OUT).iterator();
-		// //print all activities edge labels
-		// while (eActivities.hasNext()) {
-		// Edge ea = eActivities.next();
-		// System.out.println("edge label:" + ea.getLabel());
-		// }
-		// while (vActivities.hasNext()) { Vertex va = vActivities.next();
-		// Set<String> keys = va.getPropertyKeys();
-		// System.out.println("vertex property keys:" + keys.toString()); } }
-		// }
 
 		TitanMultiVertexQuery mq = g.multiQuery();
 		Iterator<Vertex> vFriends = users.iterator().next()
 				.getVertices(Direction.OUT, EdgeType.BEFRIEND).iterator();
 		while (vFriends.hasNext()) {
 			Vertex next = vFriends.next();
-			Iterator<Vertex> vEventsTemp = next.getVertices(Direction.OUT,
-					EdgeType.CREATE_EVENT).iterator();
+			System.out.println("friend: "
+					+ next.getProperty(Property.User.NAME));
+			Iterator<Vertex> vActivities = next.getVertices(Direction.OUT,
+					EdgeType.USER_ACTIVITY).iterator();
 
-			while (vEventsTemp.hasNext()) {
-				TitanVertex friendEvent = (TitanVertex) vEventsTemp.next();
+			while (vActivities.hasNext()) {
+				TitanVertex friendEvent = (TitanVertex) vActivities.next();
 				mq.addVertex(friendEvent);
 			}
 
-			Iterator<Vertex> vBlogsTemp = next.getVertices(Direction.OUT,
-					EdgeType.CREATE_BLOG).iterator();
-			System.out.println(vBlogsTemp.toString());
-
-			while (vBlogsTemp.hasNext()) {
-				TitanVertex friendBlog = (TitanVertex) vBlogsTemp.next();
-				mq.addVertex(friendBlog);
-			}
-
-			Iterator<Vertex> vBlogCommentsTemp = next.getVertices(
-					Direction.OUT, EdgeType.USER_BLOG_COMMENT).iterator();
-
-			while (vBlogCommentsTemp.hasNext()) {
-				TitanVertex friendBlogComment = (TitanVertex) vBlogCommentsTemp
-						.next();
-				System.out.println(friendBlogComment.toString());
-				mq.addVertex(friendBlogComment);
-			}
 		}
 		Map<TitanVertex, Iterable<TitanVertex>> map = mq.vertices();
 
 		for (Map.Entry<TitanVertex, Iterable<TitanVertex>> entry : map
 				.entrySet()) {
+			System.out.println(entry.getKey().getProperties().iterator().next().toString());
 			System.out.println("id:" + entry.getKey().getID() + " created @"
 					+ entry.getKey().getProperty(Property.Time.TIMESTAMP));
-			// System.out.println(entry.toString());
 		}
-
-		// TitanTransaction t = g.buildTransaction().start();
-		// TitanVertex user1 = t.getVertex(Property.User.ID, "user-1");
-		// System.out.println(user1 + "<<-");
-		// Iterator<Vertex> bs = user1.getVertices(Direction.OUT,
-		// EdgeType.BEFRIEND).iterator();
-		// while (bs.hasNext()) {
-		// System.out.println(bs.next().getProperty(Property.Blog.TIMESTAMP));
-		// }
-		// t.commit();
+		
 
 	}
 }
