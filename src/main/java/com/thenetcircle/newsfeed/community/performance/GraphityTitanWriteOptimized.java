@@ -1,7 +1,5 @@
 package com.thenetcircle.newsfeed.community.performance;
 
-import java.util.NoSuchElementException;
-
 import com.thenetcircle.newsfeed.EdgeType;
 import com.thenetcircle.newsfeed.Property;
 import com.thenetcircle.newsfeed.impl.NewsfeedOperationImpl;
@@ -11,8 +9,6 @@ import com.thinkaurelius.titan.core.TitanKey;
 import com.thinkaurelius.titan.core.TitanLabel;
 import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.TitanVertex;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
 
 /**
  * write optimized Graphity implementation for Titan
@@ -33,29 +29,46 @@ public class GraphityTitanWriteOptimized extends NewsfeedOperationImpl {
 		this.graph = titanGraph;
 
 		// TODO: create optimized graph model scheme
-//		
-//		Iterator<Vertex> vs = this.graph.getVertices().iterator();
-//		while(vs.hasNext()){
-//			Vertex vertex = vs.next();
-//			this.graph.removeVertex(vertex);	
-//		}
-//		
-//		// create user model
-//		Set<String> keys = titanGraph.getIndexedKeys(Vertex.class);
-//		if (!keys.contains(Property.User.ID)) {
-		/**titanGraph.makeKey(Property.User.ID).dataType(String.class)
-		.indexed(Vertex.class).indexed(Edge.class).unique()
-		.indexed("search", Vertex.class);**/
-//			titanGraph.createKeyIndex(Property.User.ID, Vertex.class);
-//		}
-//
-//		if (!keys.contains(Property.User.NAME)) {
-			/**titanGraph.makeKey(Property.User.NAME).dataType(String.class)
-					.indexed(Vertex.class).indexed(Edge.class).unique()
-					.indexed("search", Vertex.class)
-		.indexed("search", Edge.class).make();**/
-//		}
-		/**this.graph.commit();**/
+		//
+		// Iterator<Vertex> vs = this.graph.getVertices().iterator();
+		// while(vs.hasNext()){
+		// Vertex vertex = vs.next();
+		// this.graph.removeVertex(vertex);
+		// }
+		//
+		// // create user model
+		// Set<String> keys = titanGraph.getIndexedKeys(Vertex.class);
+		// if (!keys.contains(Property.User.ID)) {
+		/**
+		 * titanGraph.makeKey(Property.User.ID).dataType(String.class)
+		 * .indexed(Vertex.class).indexed(Edge.class).unique()
+		 * .indexed("search", Vertex.class);
+		 **/
+		// titanGraph.createKeyIndex(Property.User.ID, Vertex.class);
+		// }
+		//
+		// if (!keys.contains(Property.User.NAME)) {
+		/**
+		 * titanGraph.makeKey(Property.User.NAME).dataType(String.class)
+		 * .indexed(Vertex.class).indexed(Edge.class).unique()
+		 * .indexed("search", Vertex.class) .indexed("search",
+		 * Edge.class).make();
+		 **/
+		// }
+
+		TitanKey time = this.graph.makeKey(Property.Time.TIMESTAMP)
+				.dataType(Integer.class).make();
+		this.graph.makeLabel(EdgeType.CREATE_BLOG).sortKey(time)
+				.sortOrder(Order.DESC).make();
+		this.graph.makeLabel(EdgeType.BLOG_COMMENT).sortKey(time)
+				.sortOrder(Order.DESC).make();
+		this.graph.makeLabel(EdgeType.CREATE_EVENT).sortKey(time)
+				.sortOrder(Order.DESC).make();
+		this.graph.makeLabel(EdgeType.UPLOAD_PHOTO).sortKey(time)
+				.sortOrder(Order.DESC).make();
+		this.graph.makeLabel(EdgeType.UPLOAD_AVATAR).sortKey(time)
+				.sortOrder(Order.DESC).make();
+		this.graph.commit();
 
 	}
 
@@ -113,10 +126,8 @@ public class GraphityTitanWriteOptimized extends NewsfeedOperationImpl {
 		}
 		vAvatar.setProperty(Property.Avatar.ID, avatarId);
 		vAvatar.setProperty(Property.Avatar.TIMESTAMP, timestamp);
-		TitanKey time = this.graph.makeKey(Property.Avatar.TIMESTAMP)
-				.dataType(Integer.class).make();
-		TitanLabel label = this.graph.makeLabel(EdgeType.UPLOAD_AVATAR)
-				.sortKey(time).sortOrder(Order.DESC).make();
+		TitanLabel label = (TitanLabel) this.graph
+				.getType(EdgeType.UPLOAD_AVATAR);
 
 		vOwner.addEdge(label, vAvatar);
 		tx.commit();
@@ -136,10 +147,8 @@ public class GraphityTitanWriteOptimized extends NewsfeedOperationImpl {
 		vPhoto.setProperty(Property.Photo.ID, photoId);
 		vPhoto.setProperty(Property.Photo.TIMESTAMP, timestamp);
 
-		TitanKey time = this.graph.makeKey(Property.Photo.TIMESTAMP)
-				.dataType(Integer.class).make();
-		TitanLabel label = this.graph.makeLabel(EdgeType.UPLOAD_PHOTO)
-				.sortKey(time).sortOrder(Order.DESC).make();
+		TitanLabel label = (TitanLabel) this.graph
+				.getType(EdgeType.UPLOAD_PHOTO);
 
 		vOwner.addEdge(label, vPhoto);
 		tx.commit();
@@ -162,10 +171,9 @@ public class GraphityTitanWriteOptimized extends NewsfeedOperationImpl {
 		vEvent.setProperty(Property.Event.CONTENT, content);
 		vEvent.setProperty(Property.Event.TIMESTAMP, timestamp);
 
-		TitanKey time = this.graph.makeKey(Property.Event.TIMESTAMP)
-				.dataType(Integer.class).make();
-		TitanLabel label = this.graph.makeLabel(EdgeType.CREATE_EVENT)
-				.sortKey(time).sortOrder(Order.DESC).make();
+		TitanLabel label = (TitanLabel) this.graph
+				.getType(EdgeType.CREATE_EVENT);
+
 		vAuthor.addEdge(label, vEvent);
 		tx.commit();
 		return 0;
@@ -187,10 +195,8 @@ public class GraphityTitanWriteOptimized extends NewsfeedOperationImpl {
 		vBlog.setProperty(Property.Blog.CONTENT, content);
 		vBlog.setProperty(Property.Blog.TIMESTAMP, timestamp);
 
-		TitanKey time = this.graph.makeKey(Property.Blog.TIMESTAMP)
-				.dataType(Integer.class).make();
-		TitanLabel label = this.graph.makeLabel(EdgeType.CREATE_BLOG)
-				.sortKey(time).sortOrder(Order.DESC).make();
+		TitanLabel label = (TitanLabel) this.graph
+				.getType(EdgeType.CREATE_BLOG);
 
 		vAuthor.addEdge(label, vBlog);
 		tx.commit();
@@ -212,10 +218,8 @@ public class GraphityTitanWriteOptimized extends NewsfeedOperationImpl {
 		vComment.setProperty(Property.BlogComment.COMMENT, comment);
 		vComment.setProperty(Property.BlogComment.TIMESTAMP, timestamp);
 
-		TitanKey time = this.graph.makeKey(Property.BlogComment.TIMESTAMP)
-				.dataType(Integer.class).make();
-		TitanLabel label = this.graph.makeLabel(EdgeType.BLOG_COMMENT)
-				.sortKey(time).sortOrder(Order.DESC).make();
+		TitanLabel label = (TitanLabel) this.graph
+				.getType(EdgeType.BLOG_COMMENT);
 
 		vBlog.addEdge(label, vComment);
 		tx.commit();
@@ -228,9 +232,9 @@ public class GraphityTitanWriteOptimized extends NewsfeedOperationImpl {
 		TitanVertex vMembership = null;
 		try {
 			vMembership = this.getMembershipByType(tx, membershipType);
-		} catch (NoSuchElementException exception) {
+		} catch (Exception exception) {
 			vMembership = tx.addVertex();
-			vMembership.setProperty(Property.membership.TYPE, membershipType);
+			vMembership.setProperty(Property.Membership.TYPE, membershipType);
 		}
 
 		TitanVertex vUser = this.getUserById(tx, userId);
@@ -254,15 +258,22 @@ public class GraphityTitanWriteOptimized extends NewsfeedOperationImpl {
 	 *         null - if no user with such identifier
 	 */
 	protected TitanVertex getUserById(TitanTransaction tx, String id) {
-		return tx.getVertices((TitanKey)this.graph.getType(Property.User.ID), id).iterator().next();		
+		return tx
+				.getVertices((TitanKey) this.graph.getType(Property.User.ID),
+						id).iterator().next();
 	}
 
 	protected TitanVertex getBlogById(TitanTransaction tx, String blogId) {
-		return tx.getVertices((TitanKey)this.graph.getType(Property.Blog.ID), blogId).iterator().next();
+		return tx
+				.getVertices((TitanKey) this.graph.getType(Property.Blog.ID),
+						blogId).iterator().next();
 	}
 
 	protected TitanVertex getMembershipByType(TitanTransaction tx,
 			String membershipType) {
-		return tx.getVertices((TitanKey)this.graph.getType(Property.membership.TYPE), membershipType).iterator().next();
+		return tx
+				.getVertices(
+						(TitanKey) this.graph.getType(Property.Membership.TYPE),
+						membershipType).iterator().next();
 	}
 }

@@ -51,8 +51,12 @@ public class Property {
 		public static final String LON = "lon";
 
 	}
+	
+	public static class Time {
+		public static final String TIMESTAMP = "timestamp";
+	}
 
-	public static class membership {
+	public static class Membership {
 		public static final String TYPE = "membership_type";
 	}
 
