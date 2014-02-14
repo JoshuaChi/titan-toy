@@ -12,8 +12,6 @@ import com.thenetcircle.newsfeed.community.performance.GraphityTitanWriteOptimiz
 import com.thenetcircle.newsfeed.impl.NewsfeedOperationImpl;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanKey;
-import com.thinkaurelius.titan.core.TitanTransaction;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
