@@ -26,12 +26,12 @@ public class Startup {
 		 */
 		Configuration conf = new BaseConfiguration();
 		conf.setProperty("storage.backend", "cassandra");
-		conf.setProperty("storage.keyspace", "titan25");
+		conf.setProperty("storage.keyspace", "titan27");
 		conf.setProperty("storage.hostname", "127.0.0.1");
 		conf.setProperty("storage.cassandra-config-dir",
 				"config/cassandra.yaml");
 		conf.setProperty("storage.index.search.backend", "elasticsearch");
-		conf.setProperty("storage.index.search.directory", "/tmp/searchindex25");
+		conf.setProperty("storage.index.search.directory", "/tmp/searchindex27");
 		conf.setProperty("storage.index.search.client-only", "false");
 		conf.setProperty("storage.index.search.local-mode", "true");
 
@@ -97,23 +97,41 @@ public class Startup {
 		 * 
 		 * 1 upgrade his membership;
 		 */
-		if (graphity.beFriend("user-1", "user-3") != 0
-				|| graphity.beFriend("user-1", "user-4") != 0
-				|| graphity.beFriend("user-1", "user-5") != 0
-				|| graphity.beFriend("user-1", "user-6") != 0
-				|| graphity.beFriend("user-1", "user-7") != 0
-				|| graphity.beFriend("user-1", "user-8") != 0
-				|| graphity.beFriend("user-1", "user-9") != 0
-				|| graphity.beFriend("user-1", "user-10") != 0
-				|| graphity.beFriend("user-1", "user-11") != 0) {
-			System.err
-					.println("1 failed to be friend with user 3, 4 and 5 or they are friend already!");
+		if (graphity.beFriend("user-1", "user-3") != 0) {
+			System.err.println("failed to be friend!");
 		}
-		if (graphity.beFriend("user-2", "user-3") != 0
-				|| graphity.beFriend("user-2", "user-4") != 0
-				|| graphity.beFriend("user-2", "user-5") != 0) {
-			System.err
-					.println("2 failed to be friend with user 3, 4 and 5 or they are friend already!");
+		if (graphity.beFriend("user-1", "user-4") != 0) {
+			System.err.println("failed to be friend!");
+		}
+		if (graphity.beFriend("user-1", "user-5") != 0) {
+			System.err.println("failed to be friend!");
+		}
+		if (graphity.beFriend("user-1", "user-6") != 0) {
+			System.err.println("failed to be friend!");
+		}
+		if (graphity.beFriend("user-1", "user-7") != 0) {
+			System.err.println("failed to be friend!");
+		}
+		if (graphity.beFriend("user-1", "user-8") != 0) {
+			System.err.println("failed to be friend!");
+		}
+		if (graphity.beFriend("user-1", "user-9") != 0) {
+			System.err.println("failed to be friend!");
+		}
+		if (graphity.beFriend("user-1", "user-10") != 0) {
+			System.err.println("failed to be friend!");
+		}
+		if (graphity.beFriend("user-1", "user-11") != 0) {
+			System.err.println("failed to be friend!");
+		}
+		if (graphity.beFriend("user-2", "user-3") != 0) {
+			System.err.println("failed to be friend!");
+		}
+		if (graphity.beFriend("user-2", "user-4") != 0) {
+			System.err.println("failed to be friend!");
+		}
+		if (graphity.beFriend("user-2", "user-5") != 0) {
+			System.err.println("failed to be friend!");
 		}
 
 		if (graphity
@@ -234,23 +252,41 @@ public class Startup {
 		Iterator<Vertex> vFriends = users.iterator().next()
 				.getVertices(Direction.OUT, EdgeType.BEFRIEND).iterator();
 		while (vFriends.hasNext()) {
-			Iterator<Vertex> vBlogsTemp = vFriends.next()
-					.getVertices(Direction.OUT, EdgeType.CREATE_BLOG)
-					.iterator();
+			Vertex next = vFriends.next();
+			Iterator<Vertex> vEventsTemp = next.getVertices(Direction.OUT,
+					EdgeType.CREATE_EVENT).iterator();
+
+			while (vEventsTemp.hasNext()) {
+				TitanVertex friendEvent = (TitanVertex) vEventsTemp.next();
+				mq.addVertex(friendEvent);
+			}
+
+			Iterator<Vertex> vBlogsTemp = next.getVertices(Direction.OUT,
+					EdgeType.CREATE_BLOG).iterator();
+			System.out.println(vBlogsTemp.toString());
 
 			while (vBlogsTemp.hasNext()) {
 				TitanVertex friendBlog = (TitanVertex) vBlogsTemp.next();
-				// System.out.println("friendBlog: " + friendBlog);
 				mq.addVertex(friendBlog);
+			}
+
+			Iterator<Vertex> vBlogCommentsTemp = next.getVertices(
+					Direction.OUT, EdgeType.USER_BLOG_COMMENT).iterator();
+
+			while (vBlogCommentsTemp.hasNext()) {
+				TitanVertex friendBlogComment = (TitanVertex) vBlogCommentsTemp
+						.next();
+				System.out.println(friendBlogComment.toString());
+				mq.addVertex(friendBlogComment);
 			}
 		}
 		Map<TitanVertex, Iterable<TitanVertex>> map = mq.vertices();
 
 		for (Map.Entry<TitanVertex, Iterable<TitanVertex>> entry : map
 				.entrySet()) {
-			System.out.println("get blog which was created @"
-					+ entry.getKey().getProperty(Property.Blog.TIMESTAMP));
-//			System.out.println(entry.toString());
+			System.out.println("id:" + entry.getKey().getID() + " created @"
+					+ entry.getKey().getProperty(Property.Time.TIMESTAMP));
+			// System.out.println(entry.toString());
 		}
 
 		// TitanTransaction t = g.buildTransaction().start();

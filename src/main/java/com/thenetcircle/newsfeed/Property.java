@@ -67,28 +67,28 @@ public class Property {
 
 	public static class Photo {
 		public static final String ID = "photo_id";
-		public static final String TIMESTAMP = "timestamp";
+//		public static final String TIMESTAMP = "timestamp";
 	}
 
 	public static class Event {
 		public static final String ID = "event_id";
 		public static final String SUBJECT = "event_subject";
 		public static final String CONTENT = "event_content";
-		public static final String TIMESTAMP = "timestamp";
+//		public static final String TIMESTAMP = "timestamp";
 	}
 
 	public static class Blog {
 		public static final String ID = "blog_id";
 		public static final String SUBJECT = "blog_subject";
 		public static final String CONTENT = "blog_content";
-		public static final String TIMESTAMP = "timestamp";
+//		public static final String TIMESTAMP = "timestamp";
 	}
 
 	public static class BlogComment {
 		public static final String ID = "comment_id";
 		public static final String BLOG_ID = "blog_id";
 		public static final String COMMENT = "comment";
-		public static final String TIMESTAMP = "timestamp";
+//		public static final String TIMESTAMP = "timestamp";
 	}
 
 }

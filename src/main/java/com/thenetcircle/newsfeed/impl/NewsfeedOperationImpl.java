@@ -76,6 +76,8 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 					.sortOrder(Order.DESC).make();
 			this.graph.makeLabel(EdgeType.BLOG_COMMENT).sortKey(time)
 					.sortOrder(Order.DESC).make();
+			this.graph.makeLabel(EdgeType.USER_BLOG_COMMENT).sortKey(time)
+			.sortOrder(Order.DESC).make();
 			this.graph.makeLabel(EdgeType.CREATE_EVENT).sortKey(time)
 					.sortOrder(Order.DESC).make();
 			this.graph.makeLabel(EdgeType.UPLOAD_PHOTO).sortKey(time)
@@ -91,7 +93,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			long lastLogin, String country, float lat, float lon) {
 		
 		if(this.isUserCreated(id)){
-			return false;
+			return true;
 		}
 		
 		TitanTransaction tx = this.graph.newTransaction();
@@ -118,7 +120,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 
 		if (vUser == null) {
 			// TODO: follower missing
-			return -1;
+			return 0;
 		}
 		if (vTarget == null) {
 			// TODO: target missing
@@ -127,7 +129,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 
 		if (this.isFriend(vUser, vTarget)) {
 			// TODO: already friend with each other
-			return -1;
+			return 0;
 		}
 
 		vUser.addEdge(EdgeType.BEFRIEND, vTarget);
@@ -138,7 +140,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 	@Override
 	public int uploadAvatar(String avatarId, long timestamp, String ownerId) {
 		if(this.isUploadedAvatar(avatarId)){
-			return -1;
+			return 0;
 		}
 		
 		TitanTransaction tx = this.graph.newTransaction();
@@ -162,7 +164,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 	@Override
 	public int uploadPhoto(String photoId, long timestamp, String ownerId) {
 		if(this.isUploadedPhoto(photoId)) {
-			return -1;
+			return 0;
 		}
 		
 		TitanTransaction tx = this.graph.newTransaction();
@@ -174,7 +176,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			return -1;
 		}
 		vPhoto.setProperty(Property.Photo.ID, photoId);
-		vPhoto.setProperty(Property.Photo.TIMESTAMP, timestamp);
+		vPhoto.setProperty(Property.Time.TIMESTAMP, timestamp);
 
 		TitanLabel label = (TitanLabel) this.graph
 				.getType(EdgeType.UPLOAD_PHOTO);
@@ -189,7 +191,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 	public int createEvent(String eventId, String subject, String content,
 			long timestamp, String authorId) {
 		if(this.isCreatedEvent(eventId)) {
-			return -1;
+			return 0;
 		}
 		TitanTransaction tx = this.graph.newTransaction();
 		TitanVertex vEvent = tx.addVertex();
@@ -202,7 +204,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 		vEvent.setProperty(Property.Event.ID, eventId);
 		vEvent.setProperty(Property.Event.SUBJECT, subject);
 		vEvent.setProperty(Property.Event.CONTENT, content);
-		vEvent.setProperty(Property.Event.TIMESTAMP, timestamp);
+		vEvent.setProperty(Property.Time.TIMESTAMP, timestamp);
 
 		TitanLabel label = (TitanLabel) this.graph
 				.getType(EdgeType.CREATE_EVENT);
@@ -216,7 +218,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 	public int createBlog(String blogId, String subject, String content,
 			long timestamp, String authorId) {
 		if(this.isCreatedBlog(blogId)) {
-			return -1;
+			return 0;
 		}
 		TitanTransaction tx = this.graph.newTransaction();
 		TitanVertex vBlog = tx.addVertex();
@@ -229,7 +231,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 		vBlog.setProperty(Property.Blog.ID, blogId);
 		vBlog.setProperty(Property.Blog.SUBJECT, subject);
 		vBlog.setProperty(Property.Blog.CONTENT, content);
-		vBlog.setProperty(Property.Blog.TIMESTAMP, timestamp);
+		vBlog.setProperty(Property.Time.TIMESTAMP, timestamp);
 
 		TitanLabel label = (TitanLabel) this.graph
 				.getType(EdgeType.CREATE_BLOG);
@@ -243,11 +245,12 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 	public int commentBlog(String blogId, String commentId, String comment,
 			long timestamp, String userId) {
 		if(this.isCreatedComment(commentId)) {
-			return -1;
+			return 0;
 		}
 		TitanTransaction tx = this.graph.newTransaction();
 		TitanVertex vComment = tx.addVertex();
 		TitanVertex vBlog = this.getBlogById(tx, blogId);
+		TitanVertex vAuthor = this.getUserById(tx, userId);
 
 		if (vBlog == null) {
 			// TODO: original blog missing
@@ -255,12 +258,17 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 		}
 		vComment.setProperty(Property.BlogComment.ID, commentId);
 		vComment.setProperty(Property.BlogComment.COMMENT, comment);
-		vComment.setProperty(Property.BlogComment.TIMESTAMP, timestamp);
+		vComment.setProperty(Property.Time.TIMESTAMP, timestamp);
 
 		TitanLabel label = (TitanLabel) this.graph
 				.getType(EdgeType.BLOG_COMMENT);
 
 		vBlog.addEdge(label, vComment);
+		
+		TitanLabel label2 = (TitanLabel) this.graph
+				.getType(EdgeType.USER_BLOG_COMMENT);
+
+		vAuthor.addEdge(label2, vComment);
 		tx.commit();
 		return 0;
 	}
@@ -269,7 +277,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 	@Override
 	public int upgradeMembership(String userId, String membershipType) {
 		if(this.hasMembership(userId, membershipType)) {
-			return -1;
+			return 0;
 		}
 		TitanTransaction tx = this.graph.newTransaction();
 		TitanVertex vMembership = null;

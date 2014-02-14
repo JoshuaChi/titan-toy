@@ -6,6 +6,7 @@ package com.thenetcircle.newsfeed;
  * 
  */
 public class EdgeType {
+	public static final String ACTIVITY = "activity";
 
 	/**
 	 * user is a friend of another
@@ -39,8 +40,13 @@ public class EdgeType {
 	public static final String UPGRADE_MEMBERSHIP = "upgrade_membership";
 	
 	/**
-	 * user comments blog
+	 * blog comment
 	 */
 	public static final String BLOG_COMMENT = "blog_comment";
+	
+	/**
+	 * user comments blog
+	 */
+	public static final String USER_BLOG_COMMENT = "user_blog_comment";
 
 }
