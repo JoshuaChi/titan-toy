@@ -23,12 +23,12 @@ public class Startup {
 		 */
 		Configuration conf = new BaseConfiguration();
 		conf.setProperty("storage.backend", "cassandra");
-		conf.setProperty("storage.keyspace", "titan13");
+		conf.setProperty("storage.keyspace", "titan17");
 		conf.setProperty("storage.hostname", "127.0.0.1");
 		conf.setProperty("storage.cassandra-config-dir",
 				"config/cassandra.yaml");
 		conf.setProperty("storage.index.search.backend", "elasticsearch");
-		conf.setProperty("storage.index.search.directory", "/tmp/searchindex13");
+		conf.setProperty("storage.index.search.directory", "/tmp/searchindex17");
 		conf.setProperty("storage.index.search.client-only", "false");
 		conf.setProperty("storage.index.search.local-mode", "true");
 
@@ -201,7 +201,7 @@ public class Startup {
 			System.err.println("failed to upgradeMembership");
 		}
 
-		Iterable<Vertex> users = g.getVertices(Property.User.ID, 1L);
+		Iterable<Vertex> users = g.getVertices(Property.User.ID, "user-1");
 		
 		// as user 1, get all my firends's edges and vertices
 		Iterator<Vertex> vFriends = users.iterator().next().getVertices(Direction.OUT, EdgeType.BEFRIEND).iterator();
