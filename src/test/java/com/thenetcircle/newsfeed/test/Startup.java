@@ -9,7 +9,7 @@ import org.apache.commons.configuration.Configuration;
 
 import com.thenetcircle.newsfeed.EdgeType;
 import com.thenetcircle.newsfeed.Property;
-import com.thenetcircle.newsfeed.community.performance.GraphityTitanWriteOptimized;
+import com.thenetcircle.newsfeed.impl.NewsfeedOperationImpl;
 import com.thenetcircle.newsfeed.impl.NewsfeedOperationImpl;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -42,7 +42,7 @@ public class Startup {
 		/**
 		 * g.shutdown(); TitanCleanup.clear(g);
 		 */
-		NewsfeedOperationImpl graphity = new GraphityTitanWriteOptimized(g);
+		NewsfeedOperationImpl graphity = new NewsfeedOperationImpl(g);
 
 		/**
 		 * prepare users
