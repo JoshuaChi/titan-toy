@@ -3,6 +3,7 @@ package com.thenetcircle.newsfeed.impl;
 import com.thenetcircle.newsfeed.EdgeType;
 import com.thenetcircle.newsfeed.NewsfeedOperations;
 import com.thenetcircle.newsfeed.Property;
+import com.thenetcircle.newsfeed.Property.Activity;
 import com.thinkaurelius.titan.core.Order;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanKey;
@@ -143,6 +144,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			// TODO: owner missing
 			return -1;
 		}
+		vAvatar.setProperty(Activity.TYPE, Activity.TYPE_UPLOAD_AVATAR);
 		vAvatar.setProperty(Property.Avatar.ID, avatarId);
 		vAvatar.setProperty(Property.Time.TIMESTAMP, timestamp);
 		TitanLabel label = (TitanLabel) this.graph
@@ -167,6 +169,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			// TODO: owner missing
 			return -1;
 		}
+		vPhoto.setProperty(Activity.TYPE, Activity.TYPE_UPLOAD_PHOTO);
 		vPhoto.setProperty(Property.Photo.ID, photoId);
 		vPhoto.setProperty(Property.Time.TIMESTAMP, timestamp);
 
@@ -192,6 +195,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			// TODO: author missing
 			return -1;
 		}
+		vEvent.setProperty(Activity.TYPE, Activity.TYPE_EVENT);
 		vEvent.setProperty(Property.Event.ID, eventId);
 		vEvent.setProperty(Property.Event.SUBJECT, subject);
 		vEvent.setProperty(Property.Event.CONTENT, content);
@@ -219,6 +223,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			// TODO: author missing
 			return -1;
 		}
+		vBlog.setProperty(Activity.TYPE, Activity.TYPE_BLOG);
 		vBlog.setProperty(Property.Blog.ID, blogId);
 		vBlog.setProperty(Property.Blog.SUBJECT, subject);
 		vBlog.setProperty(Property.Blog.CONTENT, content);
@@ -247,6 +252,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			// TODO: original blog missing
 			return -1;
 		}
+		vComment.setProperty(Activity.TYPE, Activity.TYPE_BLOG_COMMENT);
 		vComment.setProperty(Property.BlogComment.ID, commentId);
 		vComment.setProperty(Property.BlogComment.COMMENT, comment);
 		vComment.setProperty(Property.Time.TIMESTAMP, timestamp);
@@ -276,6 +282,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			vMembership = this.getMembershipByType(tx, membershipType);
 		} catch (Exception exception) {
 			vMembership = tx.addVertex();
+			vMembership.setProperty(Activity.TYPE, Activity.TYPE_UPGRADE_MEMBERSHIP);
 			vMembership.setProperty(Property.Membership.TYPE, membershipType);
 			vMembership.setProperty(Property.Time.TIMESTAMP, timestamp);
 		}

@@ -56,6 +56,16 @@ public class Property {
 		public static final String TIMESTAMP = "timestamp";
 	}
 
+	public static class Activity {
+		public static final String TYPE="activity_type";
+		public static final String TYPE_EVENT="event";
+		public static final String TYPE_BLOG="blog";
+		public static final String TYPE_BLOG_COMMENT="blog_comment";
+		public static final String TYPE_UPLOAD_AVATAR="upload_avatar";
+		public static final String TYPE_UPLOAD_PHOTO="upload_photo";
+		public static final String TYPE_UPGRADE_MEMBERSHIP="upgrade_membership";
+	}
+	
 	public static class Membership {
 		public static final String TYPE = "membership_type";
 	}

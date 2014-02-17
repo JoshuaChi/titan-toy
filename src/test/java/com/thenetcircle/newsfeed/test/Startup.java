@@ -8,6 +8,9 @@ import org.apache.commons.configuration.Configuration;
 
 import com.thenetcircle.newsfeed.EdgeType;
 import com.thenetcircle.newsfeed.Property;
+import com.thenetcircle.newsfeed.Property.Activity;
+import com.thenetcircle.newsfeed.Property.Blog;
+import com.thenetcircle.newsfeed.Property.Time;
 import com.thenetcircle.newsfeed.impl.NewsfeedOperationImpl;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -15,6 +18,9 @@ import com.thinkaurelius.titan.core.TitanMultiVertexQuery;
 import com.thinkaurelius.titan.core.TitanVertex;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.tinkerpop.pipes.PipeFunction;
+import com.tinkerpop.pipes.util.structures.Pair;
 
 public class Startup {
 	public static void main(String[] args) {
@@ -23,12 +29,12 @@ public class Startup {
 		 */
 		Configuration conf = new BaseConfiguration();
 		conf.setProperty("storage.backend", "cassandra");
-		conf.setProperty("storage.keyspace", "titan31");
+		conf.setProperty("storage.keyspace", "titan32");
 		conf.setProperty("storage.hostname", "127.0.0.1");
 		conf.setProperty("storage.cassandra-config-dir",
 				"config/cassandra.yaml");
 		conf.setProperty("storage.index.search.backend", "elasticsearch");
-		conf.setProperty("storage.index.search.directory", "/tmp/searchindex31");
+		conf.setProperty("storage.index.search.directory", "/tmp/searchindex32");
 		conf.setProperty("storage.index.search.client-only", "false");
 		conf.setProperty("storage.index.search.local-mode", "true");
 
@@ -245,11 +251,38 @@ public class Startup {
 
 		for (Map.Entry<TitanVertex, Iterable<TitanVertex>> entry : map
 				.entrySet()) {
-			System.out.println(entry.getKey().getProperties().iterator().next().toString());
+			System.out.println(entry.getKey().getProperties().iterator().next()
+					.toString());
 			System.out.println("id:" + entry.getKey().getID() + " created @"
 					+ entry.getKey().getProperty(Property.Time.TIMESTAMP));
 		}
-		
 
+		//test if we can sorted activities of user 1's friends limit 3 start from 1
+		int start = 1;
+		int limit = 3;
+		GremlinPipeline<Object, Object> gp = new GremlinPipeline<Object, Object>(
+				g).start(g.getVertices(Property.User.ID, "user-1"));
+		Iterator<Vertex> result = gp.out(EdgeType.BEFRIEND)
+				.out(EdgeType.USER_ACTIVITY)
+				.order(new PipeFunction<Pair<Vertex, Vertex>, Integer>() {
+					@Override
+					public Integer compute(Pair<Vertex, Vertex> argument) {
+						Integer iB = new Integer(argument.getB()
+								.getProperty(Property.Time.TIMESTAMP)
+								.toString());
+						Integer iA = new Integer(argument.getA()
+								.getProperty(Property.Time.TIMESTAMP)
+								.toString());
+						return iB.compareTo(iA);
+					}
+
+				}).range(start, limit).toList().iterator();
+
+		while (result.hasNext()) {
+			Vertex n = result.next();
+			System.out.println(n.getProperty(Activity.TYPE) + "@"
+					+ n.getProperty(Time.TIMESTAMP));
+			System.out.println("             > " + n.getProperty(Blog.SUBJECT));
+		}
 	}
 }
