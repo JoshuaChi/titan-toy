@@ -231,6 +231,9 @@ public class Startup {
 
 		Iterable<Vertex> users = g.getVertices(Property.User.ID, "user-1");
 
+		System.out.println("========================case 1=========================");
+		System.out.println("=random loop user-1's friends activities by using TitanMultiVertexQuery.=");
+		//random loop user-1's friends activities by using TitanMultiVertexQuery.
 		TitanMultiVertexQuery mq = g.multiQuery();
 		Iterator<Vertex> vFriends = users.iterator().next()
 				.getVertices(Direction.OUT, EdgeType.BEFRIEND).iterator();
@@ -257,6 +260,8 @@ public class Startup {
 					+ entry.getKey().getProperty(Property.Time.TIMESTAMP));
 		}
 
+		System.out.println("========================case 2=========================");
+		System.out.println("=test if we can sorted activities of user 1's friends limit 3 start from 1=");
 		//test if we can sorted activities of user 1's friends limit 3 start from 1
 		int start = 1;
 		int limit = 3;
@@ -282,7 +287,6 @@ public class Startup {
 			Vertex n = result.next();
 			System.out.println(n.getProperty(Activity.TYPE) + "@"
 					+ n.getProperty(Time.TIMESTAMP));
-			System.out.println("             > " + n.getProperty(Blog.SUBJECT));
 		}
 	}
 }

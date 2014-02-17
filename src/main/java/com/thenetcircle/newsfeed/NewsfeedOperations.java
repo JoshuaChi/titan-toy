@@ -1,6 +1,5 @@
 package com.thenetcircle.newsfeed;
 
-import org.json.JSONObject;
 
 /**
  * social graph operations
