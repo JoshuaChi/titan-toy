@@ -49,6 +49,8 @@ public class Property {
 		public static final String LAT = "lat";
 
 		public static final String LON = "lon";
+		
+		public static final String GEO = "geo";
 
 	}
 	

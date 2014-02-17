@@ -9,14 +9,19 @@ import org.apache.commons.configuration.Configuration;
 import com.thenetcircle.newsfeed.EdgeType;
 import com.thenetcircle.newsfeed.Property;
 import com.thenetcircle.newsfeed.Property.Activity;
-import com.thenetcircle.newsfeed.Property.Blog;
 import com.thenetcircle.newsfeed.Property.Time;
 import com.thenetcircle.newsfeed.impl.NewsfeedOperationImpl;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanMultiVertexQuery;
 import com.thinkaurelius.titan.core.TitanVertex;
+import com.thinkaurelius.titan.core.TransactionBuilder;
+import com.thinkaurelius.titan.core.attribute.Geo;
+import com.thinkaurelius.titan.core.attribute.Geoshape;
+import com.thinkaurelius.titan.diskstorage.indexing.IndexQuery;
+import com.thinkaurelius.titan.graphdb.query.condition.PredicateCondition;
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
@@ -29,12 +34,12 @@ public class Startup {
 		 */
 		Configuration conf = new BaseConfiguration();
 		conf.setProperty("storage.backend", "cassandra");
-		conf.setProperty("storage.keyspace", "titan32");
+		conf.setProperty("storage.keyspace", "titan33");
 		conf.setProperty("storage.hostname", "127.0.0.1");
 		conf.setProperty("storage.cassandra-config-dir",
 				"config/cassandra.yaml");
 		conf.setProperty("storage.index.search.backend", "elasticsearch");
-		conf.setProperty("storage.index.search.directory", "/tmp/searchindex32");
+		conf.setProperty("storage.index.search.directory", "/tmp/searchindex33");
 		conf.setProperty("storage.index.search.client-only", "false");
 		conf.setProperty("storage.index.search.local-mode", "true");
 
@@ -231,9 +236,12 @@ public class Startup {
 
 		Iterable<Vertex> users = g.getVertices(Property.User.ID, "user-1");
 
-		System.out.println("========================case 1=========================");
-		System.out.println("=random loop user-1's friends activities by using TitanMultiVertexQuery.=");
-		//random loop user-1's friends activities by using TitanMultiVertexQuery.
+		System.out
+				.println("========================case 1=========================");
+		System.out
+				.println("=random loop user-1's friends activities by using TitanMultiVertexQuery.=");
+		// random loop user-1's friends activities by using
+		// TitanMultiVertexQuery.
 		TitanMultiVertexQuery mq = g.multiQuery();
 		Iterator<Vertex> vFriends = users.iterator().next()
 				.getVertices(Direction.OUT, EdgeType.BEFRIEND).iterator();
@@ -260,9 +268,12 @@ public class Startup {
 					+ entry.getKey().getProperty(Property.Time.TIMESTAMP));
 		}
 
-		System.out.println("========================case 2=========================");
-		System.out.println("=test if we can sorted activities of user 1's friends limit 3 start from 1=");
-		//test if we can sorted activities of user 1's friends limit 3 start from 1
+		System.out
+				.println("========================case 2=========================");
+		System.out
+				.println("=test if we can sorted activities of user 1's friends limit 3 start from 1=");
+		// test if we can sorted activities of user 1's friends limit 3 start
+		// from 1
 		int start = 1;
 		int limit = 3;
 		GremlinPipeline<Object, Object> gp = new GremlinPipeline<Object, Object>(
@@ -287,6 +298,35 @@ public class Startup {
 			Vertex n = result.next();
 			System.out.println(n.getProperty(Activity.TYPE) + "@"
 					+ n.getProperty(Time.TIMESTAMP));
+		}
+
+		System.out
+				.println("========================case 3=========================");
+		System.out
+				.println("=basic geo search with center from user-1' geo location with gender=1=");
+		// basic geo search with center from user-1' geo location with gender=1
+		Iterator<Vertex> nearMe = g
+				.query()
+				.has(Property.User.GEO, Geo.WITHIN,
+						Geoshape.circle(48.3972222f, 10.4388889f, 200.00))
+				.has(Property.User.GENDER, 1).vertices().iterator();
+		while (nearMe.hasNext()) {
+			Vertex n = nearMe.next();
+			System.out.println(n.getProperty(Property.User.NAME));
+		}
+
+		System.out
+				.println("========================case 4=========================");
+		System.out
+				.println("=basic geo search for user-1's client friends with center from user-1' geo location=");
+		// basic geo search for user-1's client friends with center from user-1' geo location		
+		GremlinPipeline<Object, Object>  gp2= new GremlinPipeline<Object, Object>(
+				g).start(g.getVertices(Property.User.ID, "user-1"));
+		Iterator<? extends Element> nearMeMyFriend = gp2.out(EdgeType.BEFRIEND).has(Property.User.GEO, Geo.WITHIN,
+				Geoshape.circle(48.3972222f, 10.4388889f, 50.00)).has(Property.User.GENDER, 1).toList().iterator();
+		while (nearMeMyFriend.hasNext()) {
+			Element n = nearMeMyFriend.next();
+			System.out.println(n.getProperty(Property.User.NAME));
 		}
 	}
 }
