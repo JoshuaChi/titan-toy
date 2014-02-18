@@ -1,5 +1,7 @@
 package com.thenetcircle.newsfeed.impl;
 
+import java.util.BitSet;
+
 import com.thenetcircle.newsfeed.EdgeType;
 import com.thenetcircle.newsfeed.NewsfeedOperations;
 import com.thenetcircle.newsfeed.Property;
@@ -136,7 +138,8 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 	}
 
 	@Override
-	public int uploadAvatar(String avatarId, long timestamp, String ownerId) {
+	public int uploadAvatar(String avatarId, long timestamp, String ownerId,
+			int[] tags) {
 		if (this.isUploadedAvatar(avatarId)) {
 			return 0;
 		}
@@ -150,6 +153,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			return -1;
 		}
 		vAvatar.setProperty(Activity.TYPE, Activity.TYPE_UPLOAD_AVATAR);
+		vAvatar.setProperty(Property.Activity.TAG, this.getBitset(tags).toByteArray());
 		vAvatar.setProperty(Property.Avatar.ID, avatarId);
 		vAvatar.setProperty(Property.Time.TIMESTAMP, timestamp);
 		TitanLabel label = (TitanLabel) graph.getType(EdgeType.USER_ACTIVITY);
@@ -160,7 +164,8 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 	}
 
 	@Override
-	public int uploadPhoto(String photoId, long timestamp, String ownerId) {
+	public int uploadPhoto(String photoId, long timestamp, String ownerId,
+			int[] tags) {
 		if (this.isUploadedPhoto(photoId)) {
 			return 0;
 		}
@@ -174,6 +179,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			return -1;
 		}
 		vPhoto.setProperty(Activity.TYPE, Activity.TYPE_UPLOAD_PHOTO);
+		vPhoto.setProperty(Property.Activity.TAG, this.getBitset(tags).toByteArray());
 		vPhoto.setProperty(Property.Photo.ID, photoId);
 		vPhoto.setProperty(Property.Time.TIMESTAMP, timestamp);
 
@@ -186,7 +192,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 
 	@Override
 	public int createEvent(String eventId, String subject, String content,
-			long timestamp, String authorId) {
+			long timestamp, String authorId, int[] tags) {
 		if (this.isCreatedEvent(eventId)) {
 			return 0;
 		}
@@ -199,6 +205,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			return -1;
 		}
 		vEvent.setProperty(Activity.TYPE, Activity.TYPE_EVENT);
+		vEvent.setProperty(Property.Activity.TAG, this.getBitset(tags).toByteArray());
 		vEvent.setProperty(Property.Event.ID, eventId);
 		vEvent.setProperty(Property.Event.SUBJECT, subject);
 		vEvent.setProperty(Property.Event.CONTENT, content);
@@ -213,7 +220,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 
 	@Override
 	public int createBlog(String blogId, String subject, String content,
-			long timestamp, String authorId) {
+			long timestamp, String authorId, int[] tags) {
 		if (this.isCreatedBlog(blogId)) {
 			return 0;
 		}
@@ -226,6 +233,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			return -1;
 		}
 		vBlog.setProperty(Activity.TYPE, Activity.TYPE_BLOG);
+		vBlog.setProperty(Property.Activity.TAG, this.getBitset(tags).toByteArray());
 		vBlog.setProperty(Property.Blog.ID, blogId);
 		vBlog.setProperty(Property.Blog.SUBJECT, subject);
 		vBlog.setProperty(Property.Blog.CONTENT, content);
@@ -240,7 +248,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 
 	@Override
 	public int commentBlog(String blogId, String commentId, String comment,
-			long timestamp, String userId) {
+			long timestamp, String userId, int[] tags) {
 		if (this.isCreatedComment(commentId)) {
 			return 0;
 		}
@@ -254,6 +262,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			return -1;
 		}
 		vComment.setProperty(Activity.TYPE, Activity.TYPE_BLOG_COMMENT);
+		vComment.setProperty(Property.Activity.TAG, this.getBitset(tags).toByteArray());
 		vComment.setProperty(Property.BlogComment.ID, commentId);
 		vComment.setProperty(Property.BlogComment.COMMENT, comment);
 		vComment.setProperty(Property.Time.TIMESTAMP, timestamp);
@@ -271,7 +280,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 
 	@Override
 	public int upgradeMembership(String userId, String membershipType,
-			long timestamp) {
+			long timestamp, int[] tags) {
 		if (this.hasMembership(userId, membershipType)) {
 			return 0;
 		}
@@ -283,6 +292,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			vMembership = tx.addVertex();
 			vMembership.setProperty(Activity.TYPE,
 					Activity.TYPE_UPGRADE_MEMBERSHIP);
+			vMembership.setProperty(Property.Activity.TAG, this.getBitset(tags).toByteArray());
 			vMembership.setProperty(Property.Membership.TYPE, membershipType);
 			vMembership.setProperty(Property.Time.TIMESTAMP, timestamp);
 		}
@@ -405,5 +415,14 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 			}
 		}
 		return false;
+	}
+
+	private BitSet getBitset(int[] tags) {
+		//set bitset
+		BitSet bits = new BitSet();
+		for (Integer i : tags) {
+			bits.set(i);
+		}
+		return bits;
 	}
 }

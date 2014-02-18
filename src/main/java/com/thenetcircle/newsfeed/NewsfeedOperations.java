@@ -1,6 +1,8 @@
 package com.thenetcircle.newsfeed;
 
 
+
+
 /**
  * social graph operations
  * 
@@ -33,15 +35,15 @@ public interface NewsfeedOperations {
 	 */
 	int beFriend(String userId, String targetId);
 	
-	int uploadAvatar(String avatarId, long timestamp, String ownerId);
+	int uploadAvatar(String avatarId, long timestamp, String ownerId, int[] tags);
 	
-	int uploadPhoto(String photoId, long timestamp, String ownerId);
+	int uploadPhoto(String photoId, long timestamp, String ownerId, int[] tags);
 
-	int createEvent(String eventId, String subject, String content, long timestamp, String authorId);
+	int createEvent(String eventId, String subject, String content, long timestamp, String authorId, int[] tags);
 
-	int createBlog(String blogId, String subject, String content, long timestamp, String authorId);
+	int createBlog(String blogId, String subject, String content, long timestamp, String authorId, int[] tags);
 
-	int commentBlog(String blogId, String commentId, String comment, long timestamp, String userId);
+	int commentBlog(String blogId, String commentId, String comment, long timestamp, String userId, int[] tags);
 	
-	int upgradeMembership(String userId, String membershipType, long timestamp);
+	int upgradeMembership(String userId, String membershipType, long timestamp, int[] tags);
 }
