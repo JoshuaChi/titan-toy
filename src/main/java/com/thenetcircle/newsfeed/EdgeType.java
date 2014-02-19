@@ -23,5 +23,7 @@ public class EdgeType {
 	 * blog comment
 	 */
 	public static final String BLOG_COMMENT = "blog_comment";
+	
+	public static final String BEFAVOURITE = "be_fav";
 
 }

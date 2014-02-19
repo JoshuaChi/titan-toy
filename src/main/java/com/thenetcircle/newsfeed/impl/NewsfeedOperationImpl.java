@@ -104,6 +104,7 @@ public class NewsfeedOperationImpl implements NewsfeedOperations {
 		user.setProperty(Property.User.AGE, j);
 		user.setProperty(Property.User.MEMBERSHIP, k);
 		user.setProperty(Property.User.LASTLOGIN, lastLogin);
+		user.setProperty(Property.User.COUNTRY, country);
 		user.setProperty(Property.User.LAT, String.format("%.7f", lat));
 		user.setProperty(Property.User.LON, String.format("%.7f", lon));
 		user.setProperty(Property.User.GEO, Geoshape.point(lat, lon));
