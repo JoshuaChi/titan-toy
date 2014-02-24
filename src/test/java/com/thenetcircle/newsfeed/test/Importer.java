@@ -51,20 +51,21 @@ public class Importer {
 		String workingDir = System.getProperty("user.dir")
 				+ "/src/test/java/com/thenetcircle/newsfeed/test/";
 
-		Boolean step1NotDone = false;
-		Boolean step2NotDone = false;
+		Boolean step1NotDone = true;
+		Boolean step2NotDone = true;
 		Boolean step3NotDone = true;
 		Boolean step4NotDone = true;
+		String postfix = "8";
 
 		Configuration conf = new BaseConfiguration();
 		conf.setProperty("storage.backend", "cassandra");
-		conf.setProperty("storage.keyspace", "titan_prod6");
+		conf.setProperty("storage.keyspace", "titan_prod"+postfix);
 		conf.setProperty("storage.hostname", "127.0.0.1");
 		conf.setProperty("storage.cassandra-config-dir",
 				"config/cassandra.yaml");
 		conf.setProperty("storage.index.search.backend", "elasticsearch");
 		conf.setProperty("storage.index.search.directory",
-				"/tmp/searchindex_prod6");
+				"/tmp/searchindex_prod"+postfix);
 		conf.setProperty("storage.index.search.client-only", "false");
 		conf.setProperty("storage.index.search.local-mode", "true");
 
@@ -100,13 +101,23 @@ public class Importer {
 
 		NewsfeedOperationImpl graphity = new NewsfeedOperationImpl(g);
 
-		BatchGraph bg = new BatchGraph(g, VertexIDType.STRING, 1000);
+		BatchGraph bg = new BatchGraph(g, VertexIDType.STRING, 10000);
 
 		// Verify graph vertex
 		//
 		// Vertex u77 = g.getVertices(Property.User.NAME,
-		// "AirpsLunt").iterator().next();
-		// System.out.println(u77);
+		// "mannimmond").iterator().next();
+		// Vertex vAny = g.getVertices().iterator().next();
+		// System.out.println(">>"+vAny.getId());
+		// Vertex u = bg.addVertex(IDConstant.user + "2");
+		// HashMap<String, Object> map1 = new HashMap<String, Object>();
+		// map1.put(Property.User.ID, "2");
+		// map1.put(Property.User.NAME, "Joshua");
+		// ElementHelper.setProperties(u, map1);
+		// bg.commit();
+		// Vertex uById = bg.getVertex(IDConstant.user + "2");
+		//
+		// System.out.println(">"+uById);
 		// System.exit(-1);
 
 		// start import all users
@@ -118,6 +129,7 @@ public class Importer {
 				reader = new CSVReader(new FileReader(csvFile));
 				String[] nextLine;
 				while ((nextLine = reader.readNext()) != null) {
+					System.out.println("User: "+nextLine[0]);
 					Vertex user = bg.addVertex(IDConstant.user + nextLine[0]);
 					HashMap<String, Object> map = new HashMap<String, Object>();
 
@@ -130,8 +142,8 @@ public class Importer {
 					map.put(Property.User.LASTLOGIN,
 							Long.parseLong(nextLine[5]));
 					map.put(Property.User.COUNTRY, nextLine[6]);
-					System.out.println(nextLine[7].getClass().getName() + "-"
-							+ nextLine[8]);
+//					System.out.println(nextLine[7].getClass().getName() + "-"
+//							+ nextLine[8]);
 					if (nextLine[7].compareTo("NULL") != 0
 							&& nextLine[8].compareTo("NULL") != 0) {
 						map.put(Property.User.LAT,
