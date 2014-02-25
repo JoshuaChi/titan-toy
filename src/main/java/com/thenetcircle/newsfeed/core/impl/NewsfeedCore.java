@@ -3,11 +3,13 @@
  */
 package com.thenetcircle.newsfeed.core.impl;
 
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 
 import com.thenetcircle.newsfeed.EdgeType;
 import com.thenetcircle.newsfeed.Property;
+import com.thenetcircle.newsfeed.Tools;
 import com.thenetcircle.newsfeed.core.Criteria;
 import com.thenetcircle.newsfeed.core.INewsfeedCore;
 import com.thenetcircle.newsfeed.exceptions.NewsfeedException;
@@ -23,6 +25,12 @@ import com.tinkerpop.pipes.util.structures.Pair;
  */
 public class NewsfeedCore implements INewsfeedCore {
 	private TitanGraph g = null;
+
+	public NewsfeedCore(TitanGraph g) {
+		super();
+		this.g = g;
+	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -42,12 +50,33 @@ public class NewsfeedCore implements INewsfeedCore {
 			gp = gp.start(c.getStartVertex()).cast(Vertex.class);
 		}
 
+		//edge paths
 		List<String> edges = c.getEdges();
 		if (edges != null) {
 			for (String e : edges) {
 				gp = gp.out(e);
 			}
 		}
+		
+		//filter tags
+		final BitSet tags = c.getTags();
+		if(tags != null) {
+			gp = gp.filter(new PipeFunction<Vertex, Boolean>() {
+				public Boolean compute(Vertex v) {
+					byte[] bitA = v.getProperty(Property.Activity.TAG);
+					BitSet bitset = Tools.fromByteArray(bitA);
+					if(bitset != null){
+						bitset.and(tags);
+						if (!bitset.isEmpty()) {
+							return true;
+						}	
+					}
+					return false;
+				}
+			});
+		}
+		
+		//order by timestamp
 		List<Vertex> result = gp
 				.order(new PipeFunction<Pair<Vertex, Vertex>, Integer>() {
 					@Override
@@ -65,10 +94,4 @@ public class NewsfeedCore implements INewsfeedCore {
 
 		return result;
 	}
-
-	public NewsfeedCore(TitanGraph g) {
-		super();
-		this.g = g;
-	}
-
 }

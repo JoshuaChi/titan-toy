@@ -1,8 +1,10 @@
 package com.thenetcircle.newsfeed.core;
 
+import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 
+import com.thenetcircle.newsfeed.Property;
 import com.tinkerpop.blueprints.Vertex;
 
 public class Criteria {
@@ -11,8 +13,23 @@ public class Criteria {
 	private int limit = 10;
 	private GeoCriteria center = null;
 	private Vertex startVertex = null;
-	
+
 	private List<String> edges = null;
+
+	/**
+	 * BitSet toBeChecked = new BitSet();
+	 * toBeChecked.set(Property.Activity.TAG_BLOG);
+	 * toBeChecked.set(Property.Activity.TAG_10YEAR_CELEBRATION);
+	 */
+	private BitSet tags = null;
+
+	public BitSet getTags() {
+		return tags;
+	}
+
+	public void setTags(BitSet tags) {
+		this.tags = tags;
+	}
 
 	public List<String> getEdges() {
 		return edges;
